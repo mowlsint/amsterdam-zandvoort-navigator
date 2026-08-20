@@ -38,6 +38,12 @@ npm run lint
 npm test
 ```
 
+## GitHub Pages
+
+The workflow in `.github/workflows/pages.yml` creates a static Next.js export
+and deploys it to GitHub Pages whenever `main` changes. The Pages publishing
+source must be set to **GitHub Actions** once in the repository settings.
+
 ## Data and attribution
 
 Place data is curated in `app/data.ts`. The application links to official sources for time-sensitive hotel, transit and event information. Map tiles are provided by OpenStreetMap through Leaflet.

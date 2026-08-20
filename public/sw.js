@@ -1,11 +1,13 @@
-const CACHE = "nl-f1-weekend-v1";
+const CACHE = "nl-f1-weekend-v2";
+const BASE_PATH = new URL("./", self.location.href).pathname.replace(/\/$/, "");
+const scoped = (path) => `${BASE_PATH}${path}`;
 const CORE = [
-  "/",
-  "/manifest.webmanifest",
-  "/app-icon.svg",
-  "/app-icon-180.png",
-  "/app-icon-192.png",
-  "/app-icon-512.png"
+  scoped("/"),
+  scoped("/manifest.webmanifest"),
+  scoped("/app-icon.svg"),
+  scoped("/app-icon-180.png"),
+  scoped("/app-icon-192.png"),
+  scoped("/app-icon-512.png")
 ];
 
 self.addEventListener("install", (event) => {
@@ -31,10 +33,10 @@ self.addEventListener("fetch", (event) => {
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put("/", copy));
+          caches.open(CACHE).then((cache) => cache.put(scoped("/"), copy));
           return response;
         })
-        .catch(() => caches.match("/"))
+        .catch(() => caches.match(scoped("/")))
     );
     return;
   }

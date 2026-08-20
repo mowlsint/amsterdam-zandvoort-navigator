@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://amsterdam-zandvoort-navigator.mowlsint.chatgpt.site";
+const socialImageUrl = new URL(`${basePath}/og.png`, new URL(siteUrl).origin).toString();
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://amsterdam-zandvoort-navigator.mowlsint.chatgpt.site"),
+  metadataBase: new URL(siteUrl),
   title: "Amsterdam × Zandvoort 2026",
   description: "Der ruhige Wochenend-Navigator für Amsterdam und den Dutch Grand Prix in Zandvoort.",
   applicationName: "NL F1 Weekend",
-  manifest: "/manifest.webmanifest",
+  manifest: `${basePath}/manifest.webmanifest`,
   appleWebApp: {
     capable: true,
     title: "NL F1 Weekend",
@@ -14,27 +20,27 @@ export const metadata: Metadata = {
   },
   formatDetection: { telephone: false },
   alternates: {
-    canonical: "https://amsterdam-zandvoort-navigator.mowlsint.chatgpt.site",
+    canonical: siteUrl,
   },
   openGraph: {
     type: "website",
     locale: "de_DE",
-    url: "https://amsterdam-zandvoort-navigator.mowlsint.chatgpt.site",
+    url: siteUrl,
     siteName: "NL F1 Weekend",
     title: "Amsterdam × Zandvoort 2026",
     description: "Der ruhige Wochenend-Navigator für Amsterdam und den Dutch Grand Prix.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Amsterdam und die Rennstrecke von Zandvoort" }],
+    images: [{ url: socialImageUrl, width: 1200, height: 630, alt: "Amsterdam und die Rennstrecke von Zandvoort" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Amsterdam × Zandvoort 2026",
     description: "Der ruhige Wochenend-Navigator für Amsterdam und den Dutch Grand Prix.",
-    images: ["/og.png"],
+    images: [socialImageUrl],
   },
   icons: {
-    icon: "/app-icon.svg",
-    shortcut: "/app-icon.svg",
-    apple: "/app-icon-180.png",
+    icon: `${basePath}/app-icon.svg`,
+    shortcut: `${basePath}/app-icon.svg`,
+    apple: `${basePath}/app-icon-180.png`,
   },
 };
 
