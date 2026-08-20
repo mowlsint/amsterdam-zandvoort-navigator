@@ -132,6 +132,10 @@ a { color: inherit; }
 .quiet-meter { display: inline-flex; align-items: center; gap: 3px; }
 .quiet-meter i { width: 5px; height: 10px; border-radius: 3px; background: var(--line); }
 .quiet-meter i.filled { background: var(--green); }
+.quiet-summary { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); }
+.quiet-summary b { font-size: 9px; font-weight: 850; white-space: nowrap; }
+.quiet-summary.q1 b, .quiet-summary.q2 b { color: var(--orange); }
+.quiet-summary.q4 b, .quiet-summary.q5 b { color: var(--green); }
 
 .map-page, .gp-page, .info-page { min-height: calc(100vh - 200px); }
 .map-title h1, .info-page .section-heading h1 { font-size: 46px; }
@@ -175,7 +179,7 @@ a { color: inherit; }
 .place-card h3 { margin: 8px 0 3px; font-size: 16px; }
 .place-card p { margin: 0; color: var(--muted); font-size: 11px; }
 .place-meta { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 12px; }
-.place-meta > span:not(.quiet-meter) { padding-left: 9px; border-left: 1px solid var(--line); color: var(--muted); font-size: 9px; font-weight: 700; }
+.place-meta > span:not(.quiet-summary) { padding-left: 9px; border-left: 1px solid var(--line); color: var(--muted); font-size: 9px; font-weight: 700; }
 .favorite { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--surface-2); color: var(--line); cursor: pointer; }
 .favorite.active { color: var(--red); }
 .empty-state { display: flex; flex-direction: column; gap: 6px; align-items: center; padding: 45px 20px; border: 1px dashed var(--line); border-radius: 18px; color: var(--muted); font-size: 13px; text-align: center; }
@@ -354,6 +358,7 @@ a { color: inherit; }
 .contact-list small { color: var(--muted); font-size: 9px; line-height: 1.45; }
 
 @media (max-width: 980px) {
+  .app-shell { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
   .topbar { grid-template-columns: 1fr auto; }
   .desktop-tabs { display: none; }
   .hero-card { grid-template-columns: 1fr 280px; gap: 35px; padding: 44px; }
@@ -369,11 +374,17 @@ a { color: inherit; }
   .info-grid { grid-template-columns: 1fr 1fr; }
   .hotel-info { grid-row: span 1; min-height: 300px; }
   .weather-card, .crowd-card { grid-column: span 1; }
+  .hotel-fab { right: 13px; bottom: calc(76px + env(safe-area-inset-bottom)); min-height: 49px; border-radius: 14px; }
+  .hotel-fab > span { width: 34px; height: 34px; }
+  .mobile-tabs { position: fixed; z-index: 1000; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 8px max(7px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); }
+  .mobile-tabs button { display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 49px; padding: 5px 2px; border: 0; border-radius: 10px; background: none; color: var(--muted); font-size: 9px; font-weight: 800; cursor: pointer; }
+  .mobile-tabs button span { font-size: 18px; line-height: 1; }
+  .mobile-tabs button:nth-child(2) { color: var(--blue); }
+  .mobile-tabs button.active { background: var(--surface-2); color: var(--red); }
 }
 
 @media (max-width: 720px) {
   body { font-size: 15px; }
-  .app-shell { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
   .page-wrap { width: min(100% - 24px, 620px); padding: 20px 0 42px; }
   .topbar { min-height: 62px; padding: max(8px, env(safe-area-inset-top)) 12px 8px; }
   .brand img { width: 38px; height: 38px; border-radius: 10px; }
@@ -430,12 +441,6 @@ a { color: inherit; }
   .info-grid { grid-template-columns: 1fr; }
   .info-card, .hotel-info { min-height: auto; }
   .weather-card, .crowd-card { grid-column: span 1; }
-  .hotel-fab { right: 13px; bottom: calc(76px + env(safe-area-inset-bottom)); min-height: 49px; border-radius: 14px; }
-  .hotel-fab > span { width: 34px; height: 34px; }
-  .mobile-tabs { position: fixed; z-index: 1000; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 8px max(7px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); }
-  .mobile-tabs button { display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 49px; padding: 5px 2px; border: 0; border-radius: 10px; background: none; color: var(--muted); font-size: 9px; font-weight: 800; cursor: pointer; }
-  .mobile-tabs button span { font-size: 18px; line-height: 1; }
-  .mobile-tabs button.active { background: var(--surface-2); color: var(--red); }
   .overlay { padding: 0; }
   .modal-card { width: 100%; max-height: calc(100vh - 28px - env(safe-area-inset-top)); border-right: 0; border-bottom: 0; border-left: 0; border-radius: 24px 24px 0 0; }
   .modal-head { padding: 19px 15px 15px 20px; }
