@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">NL F1 Weekend</title>
+  <desc id="desc">Rot-weiß-blaues Shortcut-Symbol mit F1-Schriftzug</desc>
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#202938"/>
+      <stop offset="1" stop-color="#111722"/>
+    </linearGradient>
+    <clipPath id="round"><rect width="512" height="512" rx="116"/></clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="512" height="512" fill="url(#shade)"/>
+    <path d="M0 0h512v72H0z" fill="#ae1c28"/>
+    <path d="M0 72h512v72H0z" fill="#fff"/>
+    <path d="M0 144h512v72H0z" fill="#21468b"/>
+    <path d="M-40 395C112 305 215 313 552 382v170H-40z" fill="#0a0f17"/>
+    <path d="M25 389c126-72 230-78 462-33" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="4" stroke-dasharray="18 17"/>
+    <circle cx="82" cy="361" r="12" fill="#ff6a3d"/>
+    <text x="42" y="314" fill="#fff" font-family="Arial Black, Arial, sans-serif" font-size="160" font-style="italic" font-weight="900" letter-spacing="-18">F1</text>
+    <text x="52" y="375" fill="#ff6843" font-family="Arial, sans-serif" font-size="31" font-weight="800" letter-spacing="8">WEEKEND</text>
+    <text x="399" y="463" fill="#fff" font-family="Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle">NL</text>
+  </g>
+  <rect x="7" y="7" width="498" height="498" rx="109" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="14"/>
+</svg>
