@@ -163,7 +163,7 @@ a { color: inherit; }
 .map-frame { position: sticky; top: 90px; overflow: hidden; height: 630px; border: 1px solid var(--line); border-radius: 22px; background: #dbe3df; box-shadow: var(--shadow-sm); }
 #trip-map { width: 100%; height: 100%; z-index: 1; }
 .map-switch { position: absolute; z-index: 500; top: 12px; left: 50%; display: flex; padding: 4px; border: 1px solid rgba(0,0,0,.09); border-radius: 11px; background: rgba(255,255,255,.93); box-shadow: 0 6px 16px rgba(0,0,0,.15); transform: translateX(-50%); }
-.map-switch button { min-height: 34px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: #58616d; font-size: 11px; font-weight: 850; cursor: pointer; }
+.map-switch button { min-height: 34px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #58616d; font-size: 10px; font-weight: 850; cursor: pointer; }
 .map-switch button.active { background: #182433; color: white; }
 .map-legend { position: absolute; z-index: 500; bottom: 13px; left: 13px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; max-width: calc(100% - 72px); padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,.93); color: #4f5863; font-size: 9px; font-weight: 800; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
 .map-legend i { width: 8px; height: 8px; margin-left: 3px; border-radius: 50%; background: var(--teal); }
