@@ -340,6 +340,8 @@ a { color: inherit; }
 .document-launchers a { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; min-height: 70px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); color: var(--ink); text-decoration: none; }
 .document-launchers a > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: color-mix(in srgb, var(--violet) 13%, var(--surface)); color: var(--violet); font-size: 19px; font-weight: 900; }
 .document-launchers a:nth-child(2) > span { background: color-mix(in srgb, var(--teal) 13%, var(--surface)); color: var(--teal); }
+.document-launchers a:nth-child(3) > span { background: color-mix(in srgb, var(--orange) 13%, var(--surface)); color: var(--orange); }
+.document-launchers a:nth-child(4) > span { background: color-mix(in srgb, var(--blue) 13%, var(--surface)); color: var(--blue); }
 .document-launchers b { display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
 .document-launchers small { color: var(--muted); font-size: 9px; font-weight: 600; }
 .document-launchers em { padding: 8px 10px; border-radius: 9px; background: var(--navy); color: white; font-size: 9px; font-style: normal; font-weight: 850; }
