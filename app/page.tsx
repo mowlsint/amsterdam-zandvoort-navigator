@@ -54,13 +54,26 @@ function QuietSummary({ value }: { value: number }) {
 }
 
 function Overlay({ title, eyebrow, onClose, children }: { title: string; eyebrow?: string; onClose: () => void; children: ReactNode }) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && onCloseRef.current();
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const scrollY = window.scrollY;
     document.addEventListener("keydown", closeOnEscape);
     document.body.classList.add("modal-open");
-    return () => { document.removeEventListener("keydown", closeOnEscape); document.body.classList.remove("modal-open"); };
-  }, [onClose]);
-  return <div className="overlay" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><section className="modal-card" role="dialog" aria-modal="true" aria-label={title}><div className="modal-head"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2>{title}</h2></div><button className="icon-button close-button" onClick={onClose} aria-label="Schließen">×</button></div><div className="modal-content">{children}</div></section></div>;
+    document.body.style.top = `-${scrollY}px`;
+    closeButtonRef.current?.focus({ preventScroll: true });
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      window.scrollTo(0, scrollY);
+      previousFocus?.focus({ preventScroll: true });
+    };
+  }, []);
+  return <div className="overlay" role="presentation" onClick={onClose}><section className="modal-card" role="dialog" aria-modal="true" aria-label={title} onClick={(event) => event.stopPropagation()}><div className="modal-head"><div>{eyebrow && <p className="eyebrow">{eyebrow}</p>}<h2>{title}</h2></div><button ref={closeButtonRef} type="button" className="icon-button close-button" onClick={onClose} aria-label="Fenster schließen">×</button></div><div className="modal-content">{children}</div><div className="modal-footer"><button type="button" className="modal-dismiss-button" onClick={onClose}>Fenster schließen</button></div></section></div>;
 }
 
 function ActionLink({ href, children, primary = false }: { href: string; children: ReactNode; primary?: boolean }) {
@@ -79,7 +92,7 @@ export default function Home() {
   const [position, setPosition] = useState<Position | null>(null);
   const [locationError, setLocationError] = useState("");
   const [dark, setDark] = useState(false);
-  const [mapScope, setMapScope] = useState<"city" | "route">("city");
+  const [mapScope, setMapScope] = useState<"city" | "route" | "haarlem">("city");
   const mapRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
@@ -135,6 +148,10 @@ export default function Home() {
         const line: [number, number][] = [[52.37913, 4.90029], [52.37515, 4.53245], [52.38882, 4.54086]];
         L.polyline(line, { color: "#e74040", weight: 4, opacity: 0.75, dashArray: "8 8" }).addTo(map);
         map.fitBounds(L.latLngBounds(line), { padding: [34, 34] });
+      } else if (mapScope === "haarlem") {
+        const vintageStops = filteredPlaces.filter((place) => place.category === "shoppen");
+        if (vintageStops.length > 1) map.fitBounds(L.latLngBounds(vintageStops.map((place) => [place.lat, place.lng] as [number, number])), { padding: [44, 44] });
+        else map.setView([52.3837, 4.6372], 14);
       } else map.setView([52.3737, 4.8925], 13);
       filteredPlaces.forEach((place) => {
         const meta = categoryMeta[place.category];
@@ -198,8 +215,8 @@ export default function Home() {
 
         {tab === "orte" && <section className="map-page">
           <div className="section-heading map-title"><div><p className="eyebrow">KARTE + KURATIERTE AUSWAHL</p><h1>Gute Orte ohne Suchstress</h1></div><button className="secondary-button compact" onClick={showLocation}>⌖ Mein Standort</button></div>
-          <div className="filter-panel"><div className="museum-free"><b>Museumfreier Samstag</b><span>„Ansehen“ enthält nur frei zugängliche Außenorte – Grachten, Inseln, Brücken und Uferwege.</span></div><label className="search-field"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ort, Essen oder Stichwort …" aria-label="Orte durchsuchen" />{query && <button onClick={() => setQuery("")} aria-label="Suche löschen">×</button>}</label><div className="category-row"><button className={category === "alle" ? "active" : ""} onClick={() => setCategory("alle")}>Alle</button>{categoryOrder.map((item) => <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}><i style={{ background: categoryMeta[item].color }} />{categoryMeta[item].label}</button>)}</div><div className="filter-row"><button className={`quiet-toggle${quietOnly ? " active" : ""}`} onClick={() => setQuietOnly((value) => !value)}>◌ Ruhig ≥ 4</button><label>Sortieren <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="ruhe">nach Ruhe</option><option value="name">nach Name</option><option value="distanz" disabled={!position}>nach Distanz</option></select></label><span>{filteredPlaces.length} Orte</span></div>{locationError && <p className="form-error">{locationError}</p>}</div>
-          <div className="map-layout"><div className="map-frame"><div className="map-switch"><button className={mapScope === "city" ? "active" : ""} onClick={() => setMapScope("city")}>Amsterdam</button><button className={mapScope === "route" ? "active" : ""} onClick={() => setMapScope("route")}>GP-Strecke</button></div><div id="trip-map" aria-label="Karte mit Hotel, Rückzugsorten, Gastronomie und GP-Route" /><div className="map-legend"><i className="hotel-dot" /> Hotel <i className="quiet-dot" /> Ruhig <i className="food-dot" /> Essen <i className="gp-dot" /> GP</div></div><div className="place-list">{filteredPlaces.map((place) => <article className="place-card" key={place.id}><button className="place-main" onClick={() => setSelected(place)}><div className="place-kicker"><span style={{ color: categoryMeta[place.category].color }}>{categoryMeta[place.category].icon} {categoryMeta[place.category].label}</span>{position && <em>{distanceKm(position, place).toFixed(1)} km</em>}</div><h3>{place.name}</h3><p>{place.kicker}</p><div className="place-meta"><QuietSummary value={place.quiet} /><span>{place.price}</span><span>{place.hours.split("·")[0]}</span></div></button><button className={`favorite${favorites.includes(place.id) ? " active" : ""}`} onClick={() => toggleFavorite(place.id)} aria-label={favorites.includes(place.id) ? "Aus Favoriten entfernen" : "Als Favorit speichern"}>♥</button></article>)}{!filteredPlaces.length && <div className="empty-state"><b>Nichts Passendes gefunden.</b><span>Filter lockern oder einen anderen Begriff probieren.</span></div>}</div></div>
+          <div className="filter-panel"><div className="museum-free"><b>Museumfreier Samstag</b><span>„Ansehen“ enthält nur frei zugängliche Außenorte – Grachten, Inseln, Brücken und Uferwege. „Vintage Haarlem“ bündelt sechs Läden mit Ruhe- und Preischeck.</span></div><label className="search-field"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ort, Essen oder Stichwort …" aria-label="Orte durchsuchen" />{query && <button onClick={() => setQuery("")} aria-label="Suche löschen">×</button>}</label><div className="category-row"><button className={category === "alle" ? "active" : ""} onClick={() => { setCategory("alle"); if (mapScope === "haarlem") setMapScope("city"); }}>Alle</button>{categoryOrder.map((item) => <button key={item} className={category === item ? "active" : ""} onClick={() => { setCategory(item); if (item === "shoppen") { setMapScope("haarlem"); setQuietOnly(false); } else if (mapScope === "haarlem") setMapScope("city"); }}><i style={{ background: categoryMeta[item].color }} />{categoryMeta[item].label}</button>)}</div><div className="filter-row"><button className={`quiet-toggle${quietOnly ? " active" : ""}`} onClick={() => setQuietOnly((value) => !value)}>◌ Ruhig ≥ 4</button><label>Sortieren <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="ruhe">nach Ruhe</option><option value="name">nach Name</option><option value="distanz" disabled={!position}>nach Distanz</option></select></label><span>{filteredPlaces.length} Orte</span></div>{locationError && <p className="form-error">{locationError}</p>}</div>
+          <div className="map-layout"><div className="map-frame"><div className="map-switch"><button className={mapScope === "city" ? "active" : ""} onClick={() => { setMapScope("city"); if (category === "shoppen") setCategory("alle"); }}>Amsterdam</button><button className={mapScope === "haarlem" ? "active" : ""} onClick={() => { setMapScope("haarlem"); setCategory("shoppen"); setQuietOnly(false); }}>Haarlem</button><button className={mapScope === "route" ? "active" : ""} onClick={() => { setMapScope("route"); setCategory("gp"); setQuietOnly(false); }}>GP</button></div><div id="trip-map" aria-label="Karte mit Hotel, Rückzugsorten, Gastronomie, Vintage-Läden in Haarlem und GP-Route" /><div className="map-legend"><i className="hotel-dot" /> Hotel <i className="quiet-dot" /> Ruhig <i className="food-dot" /> Essen <i className="shop-dot" /> Vintage <i className="gp-dot" /> GP</div></div><div className="place-list">{filteredPlaces.map((place) => <article className="place-card" key={place.id}><button className="place-main" onClick={() => setSelected(place)}><div className="place-kicker"><span style={{ color: categoryMeta[place.category].color }}>{categoryMeta[place.category].icon} {categoryMeta[place.category].label}</span>{position && <em>{distanceKm(position, place).toFixed(1)} km</em>}</div><h3>{place.name}</h3><p>{place.kicker}</p><div className="place-meta"><QuietSummary value={place.quiet} /><span>{place.price}</span><span>{place.hours.split("·")[0]}</span></div></button><button className={`favorite${favorites.includes(place.id) ? " active" : ""}`} onClick={() => toggleFavorite(place.id)} aria-label={favorites.includes(place.id) ? "Aus Favoriten entfernen" : "Als Favorit speichern"}>♥</button></article>)}{!filteredPlaces.length && <div className="empty-state"><b>Nichts Passendes gefunden.</b><span>Filter lockern oder einen anderen Begriff probieren.</span></div>}</div></div>
         </section>}
 
         {tab === "gp" && <section className="gp-page">
